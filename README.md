@@ -1,184 +1,172 @@
-PubChem 3D Ligand Downloader
-A Python script to automatically download 3D SDF files of ligands from PubChem using Compound IDs (CIDs) from Excel or CSV files.
+# PubChem 3D Ligand Downloader
 
-📋 Overview
-down_lig.py is a command-line tool that reads Compound IDs from spreadsheet files and downloads the corresponding 3D molecular structures in SDF format from PubChem. This is particularly useful for researchers working with molecular docking, molecular dynamics, or cheminformatics who need 3D structures for multiple compounds.
+![Python](https://img.shields.io/badge/Python-3.6%2B-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![PubChem](https://img.shields.io/badge/Data-PubChem-orange)
 
-✨ Features
-Batch Download: Process multiple CIDs from Excel (.xlsx) or CSV files
+A Python script to automatically download 3D molecular structures (SDF format) from PubChem using Compound IDs (CIDs) from Excel or CSV files.
 
-3D Structures: Downloads 3D conformers from PubChem
+## 🚀 Features
 
-Smart Naming: Uses compound names for filenames (sanitized for file systems)
+- **Batch Download**: Download multiple ligands in one run
+- **3D Structures**: Fetches optimized 3D conformers from PubChem
+- **Excel/CSV Support**: Reads CIDs from spreadsheet columns
+- **Automatic Naming**: Uses compound names for organized filenames
+- **Error Handling**: Skips invalid CIDs and handles network issues
+- **Progress Tracking**: Real-time progress with success/failure reports
 
-Error Handling: Skips invalid CIDs and handles network errors gracefully
+## 📋 Prerequisites
 
-Progress Tracking: Shows real-time progress and status updates
+- Python 3.6 or higher
+- Required Python packages:
+  ```bash
+  pip install pandas requests openpyxl
+  ```
 
-Duplicate Prevention: Skips already downloaded files
+## 🛠️ Installation
 
-Rate Limiting: Includes delays to be respectful to PubChem servers
+1. **Clone or download the script:**
+   ```bash
+   git clone <your-repo-url>
+   cd pubchem-ligand-downloader
+   ```
 
-🛠️ Requirements
-Python Dependencies
-bash
-pip install pandas requests openpyxl
-Required Packages
-pandas - For reading Excel/CSV files
+2. **Install dependencies:**
+   ```bash
+   pip install pandas requests openpyxl
+   ```
 
-requests - For HTTP requests to PubChem
+## 📖 Usage
 
-openpyxl - For Excel file support (installed with pandas)
-
-📁 Installation
-Clone or download the script:
-
-bash
-git clone <your-repo-url>
-cd pubchem-ligand-downloader
-Install dependencies:
-
-bash
-pip install pandas requests openpyxl
-Prepare your data file:
-
-Ensure your Excel/CSV file has a column with PubChem CIDs
-
-Optional: Include a column with compound names for better filenames
-
-🚀 Usage
-Basic Usage
-bash
+### Basic Usage
+```bash
 python down_lig.py
-The script will interactively prompt you for:
+```
 
-Excel/CSV filename - Your data file
+### Step-by-Step Process
 
-Sheet name (Excel only) - Leave blank for first sheet
+1. **Prepare your Excel/CSV file** with columns containing:
+   - CID (Compound ID) - **required**
+   - Compound Name - **optional but recommended**
 
-Header row number - Row containing column names (default: 1)
+2. **Run the script:**
+   ```bash
+   python down_lig.py
+   ```
 
-CID column name - Exact name of the column with PubChem CIDs
+3. **Follow the interactive prompts:**
+   - Enter your Excel filename
+   - Specify sheet name (or press Enter for first sheet)
+   - Enter header row number (usually 1)
+   - Enter the exact CID column name
+   - Enter compound name column (optional)
 
-Name column name (optional) - Column with compound names for filenames
+### Example Input File Structure
 
-Example Input File Structure
-Excel/CSV format:
+| CID    | Compound Name    | Other Data |
+|--------|------------------|------------|
+| 2244   | Aspirin          | ...        |
+| 1983   | Acetaminophen    | ...        |
+| 3672   | Ibuprofen        | ...        |
 
-Compound_Name	PubChem_CID	SMILES	Activity
-Aspirin	2244	CC(=O)Oc1...	Active
-Ibuprofen	3672	CC(C)Cc1...	Active
-Paracetamol	1983	CC(=O)Nc1...	Inactive
-Output
-Creates a ligands/ directory with downloaded SDF files
+## 📁 Output
 
-File naming: {Compound_Name}_{CID}.sdf (e.g., Aspirin_2244.sdf)
+- Creates a `ligands/` directory
+- Downloads SDF files with naming format: `{CompoundName}_{CID}.sdf`
+- Example: `Aspirin_2244.sdf`, `Acetaminophen_1983.sdf`
 
-If no name column provided: ligand_{CID}.sdf
+## ⚙️ Advanced Usage
 
-💡 Example Workflow
-bash
-# Run the script
-python down_lig.py
+### Command Line Arguments (Optional Enhancement)
+For future versions, you can modify the script to accept command-line arguments:
 
-# Interactive session:
-Enter the full name of your Excel file: 'my_compounds.xlsx'
-Enter the sheet name (or press Enter to use the first sheet): 
-Enter the row number of your headers: 1
-Enter the exact name of the column containing the CIDs: PubChem_CID
-Enter the column for compound names: Compound_Name
-🎯 Use Cases
-Molecular Docking: Prepare ligand libraries for virtual screening
+```python
+# Example future enhancement
+python down_lig.py --file data.xlsx --cid-column "PubChem CID" --name-column "Drug Name"
+```
 
-Molecular Dynamics: Get starting structures for simulation
+### Customizing Download Parameters
+Modify these variables in the script:
+```python
+# Change timeout (seconds)
+response = requests.get(url, timeout=60)
 
-Cheminformatics: Build compound datasets for QSAR studies
+# Change delay between requests (seconds)
+time.sleep(0.5)
+```
 
-Education: Download structures for teaching and demonstrations
+## 🐛 Troubleshooting
 
-⚠️ Limitations & Notes
-3D Availability: Not all compounds have 3D conformers in PubChem
+### Common Issues
 
-CID Validation: Ensure CIDs are valid PubChem identifiers
+1. **"File not found" error**
+   - Ensure the Excel file is in the same directory as the script
+   - Check for typos in the filename
 
-Network Dependent: Requires stable internet connection
+2. **"Column not found" error**
+   - Verify the exact column names (case-sensitive)
+   - Check the header row number
 
-Rate Limiting: Includes 0.3s delay between requests to be API-friendly
+3. **Network errors**
+   - Check internet connection
+   - Increase timeout in the script
+   - PubChem may be temporarily unavailable
 
-File Names: Special characters in compound names are removed for compatibility
+4. **No 3D structures found**
+   - Some compounds may not have 3D conformers in PubChem
+   - The script will skip these and continue
 
-🔧 Customization
-You can modify the script to:
+### Debug Mode
+Add debug printing by modifying the script:
+```python
+# Add this after line 95
+print("Debug - DataFrame columns:", df.columns.tolist())
+print("Debug - First few rows:")
+print(df.head())
+```
 
-Change the output directory
+## 📊 Example Workflow
 
-Adjust request timeouts
+```
+1. Prepare Excel file with CIDs
+2. Run: python down_lig.py
+3. Enter: "compounds.xlsx"
+4. Enter: "Sheet1" 
+5. Enter: "1" (header row)
+6. Enter: "CID"
+7. Enter: "Compound_Name"
+8. Script downloads all 3D structures to ligands/
+```
 
-Modify the delay between requests
+## 🔧 Technical Details
 
-Add additional file formats (MOL2, PDB, etc.)
+- **API Used**: PubChem PUG REST API
+- **Format**: 3D SDF files
+- **Record Type**: `record_type=3d` for optimized 3D coordinates
+- **Rate Limiting**: Built-in 0.3s delay between requests
 
-Implement parallel downloads
+## 🤝 Contributing
 
-🐛 Troubleshooting
-Common Issues
-"File not found" error
-
-Ensure the script and data file are in the same directory
-
-Check for typos in the filename
-
-"Column not found" error
-
-Verify the exact column name (case-sensitive)
-
-Check the header row number
-
-No 3D structures found
-
-Some compounds may not have 3D conformers in PubChem
-
-Try alternative identifiers or manually upload to PubChem
-
-Network errors
-
-Check internet connection
-
-Verify firewall/proxy settings
-
-📊 Output Structure
-text
-project/
-├── down_lig.py
-├── your_data_file.xlsx
-└── ligands/                 # Created automatically
-    ├── Aspirin_2244.sdf
-    ├── Ibuprofen_3672.sdf
-    └── Paracetamol_1983.sdf
-🤝 Contributing
 Contributions are welcome! Please feel free to:
+- Report bugs and issues
+- Suggest new features
+- Submit pull requests
+- Improve documentation
 
-Report bugs and issues
 
-Suggest new features
+## 🙏 Acknowledgments
 
-Submit pull requests
+- [PubChem](https://pubchem.ncbi.nlm.nih.gov/) for providing free chemical data
+- Python community for excellent libraries (pandas, requests)
 
-Improve documentation
+## 📞 Support
 
-📄 License
-This project is open source and available under the MIT License.
+If you encounter any problems:
+1. Check the troubleshooting section above
+2. Ensure your input file format is correct
+3. Verify all CIDs exist in PubChem
+4. Open an issue on GitHub with your error message and file format
 
-🙏 Acknowledgments
-PubChem for providing the chemical data and API
+---
 
-Python community for the excellent libraries used
-
-🔗 Related Resources
-PubChem REST API Documentation
-
-PubChem Compound Search
-
-RDKit - Cheminformatics toolkit for further processing
-
-Note: Please be respectful of PubChem's servers and follow their usage policies.
+**Note**: This tool is for research and educational purposes. Please respect PubChem's terms of service and rate limits.
